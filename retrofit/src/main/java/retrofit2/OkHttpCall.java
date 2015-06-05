@@ -29,7 +29,7 @@ import okio.Okio;
 import static retrofit2.Utils.checkNotNull;
 
 final class OkHttpCall<T> implements Call<T> {
-  private final ServiceMethod<T, ?> serviceMethod;
+  private final CallFactory<T> rawCallFactory;
   private final @Nullable Object[] args;
 
   private volatile boolean canceled;
@@ -41,14 +41,14 @@ final class OkHttpCall<T> implements Call<T> {
   @GuardedBy("this")
   private boolean executed;
 
-  OkHttpCall(ServiceMethod<T, ?> serviceMethod, @Nullable Object[] args) {
-    this.serviceMethod = serviceMethod;
+  OkHttpCall(CallFactory<T> rawCallFactory, @Nullable Object[] args) {
+    this.rawCallFactory = rawCallFactory;
     this.args = args;
   }
 
   @SuppressWarnings("CloneDoesntCallSuperClone") // We are a final type & this saves clearing state.
   @Override public OkHttpCall<T> clone() {
-    return new OkHttpCall<>(serviceMethod, args);
+    return new OkHttpCall<>(rawCallFactory, args);
   }
 
   @Override public synchronized Request request() {
@@ -181,8 +181,7 @@ final class OkHttpCall<T> implements Call<T> {
   }
 
   private okhttp3.Call createRawCall() throws IOException {
-    Request request = serviceMethod.toRequest(args);
-    okhttp3.Call call = serviceMethod.callFactory.newCall(request);
+    okhttp3.Call call = rawCallFactory.create(args);
     if (call == null) {
       throw new NullPointerException("Call.Factory returned null.");
     }
@@ -215,7 +214,7 @@ final class OkHttpCall<T> implements Call<T> {
 
     ExceptionCatchingRequestBody catchingBody = new ExceptionCatchingRequestBody(rawBody);
     try {
-      T body = serviceMethod.toResponse(catchingBody);
+      T body = rawCallFactory.toResponse(catchingBody);
       return Response.success(body, rawResponse);
     } catch (RuntimeException e) {
       // If the underlying source threw an exception, propagate that rather than indicating it was

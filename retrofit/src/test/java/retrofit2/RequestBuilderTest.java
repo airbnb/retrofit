@@ -2679,11 +2679,13 @@ public final class RequestBuilderTest {
 
     Retrofit retrofit = builder.callFactory(callFactory).build();
 
+    RestAdapter restAdapter = new RestAdapter(retrofit, false);
     Method method = TestingUtils.onlyMethod(cls);
     //noinspection unchecked
     ServiceMethod<T, Call<T>> serviceMethod =
-        (ServiceMethod<T, Call<T>>) retrofit.loadServiceMethod(method);
-    Call<T> okHttpCall = new OkHttpCall<>(serviceMethod, args);
+        (ServiceMethod<T, Call<T>>) restAdapter.loadServiceMethod(method);
+    DefaultCallFactory<T> factory = new DefaultCallFactory<>(serviceMethod);
+    Call<T> okHttpCall = new OkHttpCall<>(factory, args);
     Call<T> call = serviceMethod.callAdapter.adapt(okHttpCall);
     try {
       call.execute();
