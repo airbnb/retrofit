@@ -27,7 +27,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import okio.BufferedSink;
 
-final class RequestBuilder {
+final class RestAdapterRawRequestBuilder {
   private final String method;
 
   private final HttpUrl baseUrl;
@@ -42,7 +42,7 @@ final class RequestBuilder {
   private FormEncodingBuilder formEncodingBuilder;
   private RequestBody body;
 
-  RequestBuilder(String method, HttpUrl baseUrl, String relativeUrl, Headers headers,
+  RestAdapterRawRequestBuilder(String method, HttpUrl baseUrl, String relativeUrl, Headers headers,
       MediaType mediaType, boolean hasBody, boolean isFormEncoded, boolean isMultipart) {
     this.method = method;
 

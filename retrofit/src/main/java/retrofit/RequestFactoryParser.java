@@ -54,7 +54,8 @@ final class RequestFactoryParser {
   private static final Pattern PARAM_NAME_REGEX = Pattern.compile(PARAM);
   private static final Pattern PARAM_URL_REGEX = Pattern.compile("\\{(" + PARAM + ")\\}");
 
-  static RequestFactory parse(Method method, BaseUrl baseUrl, Converter.Factory converterFactory) {
+  static RestAdapterRawRequestFactory parse(Method method, BaseUrl baseUrl,
+      Converter.Factory converterFactory) {
     RequestFactoryParser parser = new RequestFactoryParser(method);
     parser.parseMethodAnnotations();
     parser.parseParameters(converterFactory);
@@ -78,9 +79,9 @@ final class RequestFactoryParser {
     this.method = method;
   }
 
-  private RequestFactory toRequestFactory(BaseUrl baseUrl) {
-    return new RequestFactory(httpMethod, baseUrl, relativeUrl, headers, mediaType, hasBody,
-        isFormEncoded, isMultipart, requestBuilderActions);
+  private RestAdapterRawRequestFactory toRequestFactory(BaseUrl baseUrl) {
+    return new RestAdapterRawRequestFactory(httpMethod, baseUrl, relativeUrl, headers, mediaType,
+        hasBody, isFormEncoded, isMultipart, requestBuilderActions);
   }
 
   private RuntimeException parameterError(int index, String message, Object... args) {

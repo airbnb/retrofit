@@ -23,7 +23,7 @@ import retrofit.http.Streaming;
 
 import static retrofit.Utils.methodError;
 
-final class MethodHandler<T> {
+final class MethodHandler<T> implements CallAdapter<T> {
   @SuppressWarnings("unchecked")
   static MethodHandler<?> create(Method method, OkHttpClient client, BaseUrl baseUrl,
       CallAdapter.Factory callAdapterFactory, Converter.Factory converterFactory) {
@@ -32,7 +32,8 @@ final class MethodHandler<T> {
     Converter<Object> responseConverter =
         (Converter<Object>) createResponseConverter(method, callAdapter.responseType(),
             converterFactory);
-    RequestFactory requestFactory = RequestFactoryParser.parse(method, baseUrl, converterFactory);
+    RestAdapterRawRequestFactory requestFactory
+        = RequestFactoryParser.parse(method, baseUrl, converterFactory);
     return new MethodHandler<>(client, requestFactory, callAdapter, responseConverter);
   }
 
@@ -79,11 +80,11 @@ final class MethodHandler<T> {
   }
 
   private final OkHttpClient client;
-  private final RequestFactory requestFactory;
+  private final RestAdapterRawRequestFactory requestFactory;
   private final CallAdapter<T> callAdapter;
   private final Converter<T> responseConverter;
 
-  private MethodHandler(OkHttpClient client, RequestFactory requestFactory,
+  private MethodHandler(OkHttpClient client, RestAdapterRawRequestFactory requestFactory,
       CallAdapter<T> callAdapter, Converter<T> responseConverter) {
     this.client = client;
     this.requestFactory = requestFactory;
@@ -92,6 +93,14 @@ final class MethodHandler<T> {
   }
 
   Object invoke(Object... args) {
-    return callAdapter.adapt(new OkHttpCall<>(client, requestFactory, responseConverter, args));
+    return adapt(new OkHttpCall<>(client, requestFactory, responseConverter, args));
+  }
+
+  @Override public Type responseType() {
+    return callAdapter.responseType();
+  }
+
+  @Override public Object adapt(Call<T> call) {
+    return callAdapter.adapt(call);
   }
 }

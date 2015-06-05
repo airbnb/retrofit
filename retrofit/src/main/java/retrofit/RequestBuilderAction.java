@@ -22,10 +22,10 @@ import java.util.Map;
 import static retrofit.Utils.checkNotNull;
 
 abstract class RequestBuilderAction {
-  abstract void perform(RequestBuilder builder, Object value);
+  abstract void perform(RestAdapterRawRequestBuilder builder, Object value);
 
   static final class Url extends RequestBuilderAction {
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       builder.setRelativeUrl((String) value);
     }
   }
@@ -37,7 +37,7 @@ abstract class RequestBuilderAction {
       this.name = checkNotNull(name, "name == null");
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       if (value instanceof Iterable) {
@@ -68,7 +68,7 @@ abstract class RequestBuilderAction {
       this.encoded = encoded;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) {
         throw new IllegalArgumentException(
             "Path parameter \"" + name + "\" value must not be null.");
@@ -86,7 +86,7 @@ abstract class RequestBuilderAction {
       this.encoded = encoded;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       if (value instanceof Iterable) {
@@ -115,7 +115,7 @@ abstract class RequestBuilderAction {
       this.encoded = encoded;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       Map<?, ?> map = (Map<?, ?>) value;
@@ -141,7 +141,7 @@ abstract class RequestBuilderAction {
       this.encoded = encoded;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       if (value instanceof Iterable) {
@@ -170,7 +170,7 @@ abstract class RequestBuilderAction {
       this.encoded = encoded;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       Map<?, ?> map = (Map<?, ?>) value;
@@ -196,7 +196,7 @@ abstract class RequestBuilderAction {
       this.converter = converter;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       //noinspection unchecked
@@ -213,7 +213,7 @@ abstract class RequestBuilderAction {
       this.transferEncoding = transferEncoding;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) return; // Skip null values.
 
       Map<?, ?> map = (Map<?, ?>) value;
@@ -245,7 +245,7 @@ abstract class RequestBuilderAction {
       this.converter = converter;
     }
 
-    @Override void perform(RequestBuilder builder, Object value) {
+    @Override void perform(RestAdapterRawRequestBuilder builder, Object value) {
       if (value == null) {
         throw new IllegalArgumentException("Body parameter value must not be null.");
       }

@@ -16,6 +16,7 @@
 package retrofit;
 
 import com.google.common.reflect.TypeToken;
+
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
@@ -24,9 +25,11 @@ import com.squareup.okhttp.mockwebserver.MockWebServer;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.List;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+
 import retrofit.http.GET;
 import rx.Observable;
 import rx.observables.BlockingObservable;

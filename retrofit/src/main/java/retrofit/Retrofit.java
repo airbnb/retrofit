@@ -19,11 +19,6 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.RequestBody;
 import com.squareup.okhttp.ResponseBody;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.util.LinkedHashMap;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import retrofit.http.HTTP;
 import retrofit.http.Header;
@@ -86,13 +81,13 @@ import static retrofit.Utils.checkNotNull;
  * @author Jake Wharton (jw@squareup.com)
  */
 public final class Retrofit {
-  private final Map<Method, MethodHandler<?>> methodHandlerCache = new LinkedHashMap<>();
 
   private final OkHttpClient client;
   private final BaseUrl baseUrl;
   private final Converter.Factory converterFactory;
   private final CallAdapter.Factory adapterFactory;
   private final Executor callbackExecutor;
+  private final RestAdapter restAdapter;
 
   private Retrofit(OkHttpClient client, BaseUrl baseUrl, Converter.Factory converterFactory,
       CallAdapter.Factory adapterFactory, Executor callbackExecutor) {
@@ -101,36 +96,7 @@ public final class Retrofit {
     this.converterFactory = converterFactory;
     this.adapterFactory = adapterFactory;
     this.callbackExecutor = callbackExecutor;
-  }
-
-  /** Create an implementation of the API defined by the {@code service} interface. */
-  @SuppressWarnings("unchecked") // Single-interface proxy creation guarded by parameter safety.
-  public <T> T create(Class<T> service) {
-    Utils.validateServiceClass(service);
-    return (T) Proxy.newProxyInstance(service.getClassLoader(), new Class<?>[] { service },
-        handler);
-  }
-
-  private final InvocationHandler handler = new InvocationHandler() {
-    @Override public Object invoke(Object proxy, Method method, Object... args) throws Throwable {
-      // If the method is a method from Object then defer to normal invocation.
-      if (method.getDeclaringClass() == Object.class) {
-        return method.invoke(this, args);
-      }
-      return loadMethodHandler(method).invoke(args);
-    }
-  };
-
-  MethodHandler<?> loadMethodHandler(Method method) {
-    MethodHandler<?> handler;
-    synchronized (methodHandlerCache) {
-      handler = methodHandlerCache.get(method);
-      if (handler == null) {
-        handler = MethodHandler.create(method, client, baseUrl, adapterFactory, converterFactory);
-        methodHandlerCache.put(method, handler);
-      }
-    }
-    return handler;
+    this.restAdapter = new RestAdapter(client, baseUrl, converterFactory, adapterFactory);
   }
 
   public OkHttpClient client() {
@@ -139,6 +105,10 @@ public final class Retrofit {
 
   public BaseUrl baseUrl() {
     return baseUrl;
+  }
+
+  public <T> T create(Class<T> service) {
+    return restAdapter.create(service);
   }
 
   /**

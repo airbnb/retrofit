@@ -5,6 +5,12 @@ import com.squareup.okhttp.HttpUrl;
 import com.squareup.okhttp.MediaType;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.RequestBody;
+import com.squareup.okhttp.mockwebserver.MockWebServer;
+
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -13,9 +19,8 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import okio.Buffer;
-import org.junit.Ignore;
-import org.junit.Test;
 import retrofit.http.Body;
 import retrofit.http.DELETE;
 import retrofit.http.Field;
@@ -42,7 +47,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
 @SuppressWarnings({"UnusedParameters", "unused"}) // Parameters inspected reflectively.
-public final class RequestBuilderTest {
+public final class RestAdapterRawRequestBuilderTest {
+  @Rule public final MockWebServer server = new MockWebServer();
+
   private static final MediaType TEXT_PLAIN = MediaType.parse("text/plain");
 
   @Test public void customMethodNoBody() {

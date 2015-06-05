@@ -18,10 +18,12 @@ package com.example.retrofit;
 import com.google.common.reflect.TypeToken;
 import com.google.common.util.concurrent.AbstractFuture;
 import com.google.common.util.concurrent.ListenableFuture;
+
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
+
 import retrofit.Call;
 import retrofit.CallAdapter;
 import retrofit.Callback;
