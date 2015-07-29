@@ -26,17 +26,25 @@ import rx.Observable;
 
 public final class ObservableRequest extends TypedRequest {
   ObservableRequest(OkHttpClient client, BaseUrl baseUrl, Converter.Factory converterFactory,
-      CallAdapter.Factory adapterFactory, Type returnType, BodyEncoding bodyEncoding, String path,
-      Method method, Object body, Object tag, List<Query> query, Map<String, String> headers,
-      List<Part> parts, List<Field> fields) {
+      CallAdapter.Factory adapterFactory, ParameterizedType returnType, BodyEncoding bodyEncoding,
+      String path, Method method, Object body, Object tag, List<Query> query,
+      Map<String, String> headers, List<Part> parts, List<Field> fields) {
     super(client, baseUrl, converterFactory, adapterFactory, returnType, bodyEncoding,
         path, method, body, tag, query, headers, parts, fields);
+  }
+
+  public Builder newBuilder(Retrofit retrofit) {
+    return new Builder(retrofit, this);
   }
 
   public static final class Builder extends TypedRequest.Builder {
 
     public Builder(Retrofit retrofit) {
       super(retrofit);
+    }
+
+    public Builder(Retrofit retrofit, ObservableRequest observableRequest) {
+      super(retrofit, observableRequest);
     }
 
     @Override protected TypedRequest newRequest() {

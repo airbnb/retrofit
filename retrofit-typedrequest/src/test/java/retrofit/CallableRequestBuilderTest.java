@@ -1,5 +1,6 @@
 package retrofit;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.reflect.TypeToken;
 
 import org.junit.Test;
@@ -29,5 +30,36 @@ public class CallableRequestBuilderTest {
     ParameterizedType parameterizedType = (ParameterizedType) returnType;
     assertThat(parameterizedType.getRawType()).isEqualTo(Call.class);
     assertThat(parameterizedType.getActualTypeArguments()[0]).isEqualTo(responseType);
+  }
+
+  @Test public void newBuilder() {
+    Retrofit retrofit = new Retrofit.Builder()
+        .baseUrl("http://example.com")
+        .converterFactory(new StringListConverterFactory())
+        .build();
+
+    CallableRequest request = new CallableRequest.Builder(retrofit)
+        .path("/")
+        .responseType(
+            new TypeToken<List<String>>(CallableRequestBuilderTest.this.getClass()) {
+            }.getType())
+        .method(Method.GET)
+        .build();
+
+    ImmutableList<Query> params = ImmutableList.of(new Query("foo", "bar"));
+    ImmutableList<Part> parts = ImmutableList.of(new Part("kit", "kat"));
+    CallableRequest newRequest = request.newBuilder(retrofit)
+        .path("/abc")
+        .method(Method.POST)
+        .queryParams(params)
+        .body(123)
+        .parts(parts)
+        .build();
+
+    assertThat(newRequest.path()).isEqualTo("/abc");
+    assertThat(newRequest.method()).isEqualTo(Method.POST);
+    assertThat(newRequest.queryParams()).isEqualTo(params);
+    assertThat(newRequest.body()).isEqualTo(123);
+    assertThat(newRequest.parts()).isEqualTo(parts);
   }
 }

@@ -18,6 +18,7 @@ package retrofit;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.ResponseBody;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Collections;
 import java.util.List;
@@ -33,28 +34,28 @@ public abstract class TypedRequest {
     FORM_URL_ENCODED
   }
 
-  private final OkHttpClient client;
-  private final CallAdapter.Factory adapterFactory;
-  private final Type returnType;
-  private final BodyEncoding bodyEncoding;
-  private final String path;
-  private final Method method;
-  private final Object body;
-  private final Object tag;
-  private final List<Query> query;
-  private final Map<String, String> headers;
-  private final List<Part> parts;
-  private final List<Field> fields;
-  private final CallAdapter callAdapter;
-  private final TypedRawRequestFactory requestFactory;
-  private final Converter<?> converter;
-  private boolean isCancelled;
+  protected final OkHttpClient client;
+  protected final CallAdapter.Factory adapterFactory;
+  protected final ParameterizedType returnType;
+  protected final BodyEncoding bodyEncoding;
+  protected final String path;
+  protected final Method method;
+  protected final Object body;
+  protected final Object tag;
+  protected final List<Query> query;
+  protected final Map<String, String> headers;
+  protected final List<Part> parts;
+  protected final List<Field> fields;
+  protected final CallAdapter callAdapter;
+  protected final TypedRawRequestFactory requestFactory;
+  protected final Converter<?> converter;
+  protected boolean isCancelled;
 
-  @SuppressWarnings("unchecked")
-  TypedRequest(OkHttpClient client, BaseUrl baseUrl, Converter.Factory converterFactory,
-      CallAdapter.Factory adapterFactory, Type returnType, BodyEncoding bodyEncoding, String path,
-      Method method, Object body, Object tag, List<Query> query, Map<String, String> headers,
-      List<Part> parts, List<Field> fields) {
+  @SuppressWarnings("unchecked") TypedRequest(OkHttpClient client, BaseUrl baseUrl,
+      Converter.Factory converterFactory, CallAdapter.Factory adapterFactory,
+      ParameterizedType returnType, BodyEncoding bodyEncoding, String path, Method method,
+      Object body, Object tag, List<Query> query, Map<String, String> headers, List<Part> parts,
+      List<Field> fields) {
     this.client = client;
     this.adapterFactory = adapterFactory;
     this.returnType = returnType;
@@ -116,7 +117,7 @@ public abstract class TypedRequest {
     return isCancelled;
   }
 
-  public Type returnType() {
+  public ParameterizedType returnType() {
     return returnType;
   }
 
@@ -127,11 +128,6 @@ public abstract class TypedRequest {
 
   @SuppressWarnings("unchecked")
   private CallAdapter<?> createCallAdapter(Converter.Factory converterFactory) {
-    // Check for invalid configurations.
-    if (returnType == void.class) {
-      throw requestError("Service methods cannot return void.");
-    }
-
     CallAdapter<?> adapter = adapterFactory.get(returnType);
     if (adapter == null) {
       throw requestError(
@@ -169,6 +165,30 @@ public abstract class TypedRequest {
     protected Map<String, String> headers = Collections.emptyMap();
     protected List<Part> parts = Collections.emptyList();
     protected List<Field> fields = Collections.emptyList();
+
+    public Builder(Retrofit retrofit, TypedRequest request) {
+      this(retrofit);
+      path = request.path;
+      method = request.method;
+      tag = request.tag;
+      body = request.body;
+      responseType = request.returnType.getActualTypeArguments()[0];
+
+      if (query != null && !query.isEmpty()) {
+        query = request.query;
+      }
+      if (headers != null && !headers.isEmpty()) {
+        headers = request.headers;
+      }
+      if (fields != null && !fields.isEmpty()) {
+        fields = request.fields;
+        bodyEncoding = BodyEncoding.FORM_URL_ENCODED;
+      }
+      if (parts != null && !parts.isEmpty()) {
+        parts = request.parts;
+        bodyEncoding = BodyEncoding.MULTIPART;
+      }
+    }
 
     public Builder(Retrofit retrofit) {
       this.client = retrofit.client();
