@@ -20,7 +20,7 @@ import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
+import io.reactivex.Observable;
 
 public final class ObservableRequest extends TypedRequest {
   ObservableRequest(Retrofit retrofit, ParameterizedType returnType, BodyEncoding bodyEncoding,

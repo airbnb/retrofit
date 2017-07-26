@@ -27,9 +27,8 @@ import retrofit2.Method;
 import retrofit2.ObservableRequest;
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
-import rx.Observable;
-import rx.observables.BlockingObservable;
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
+import io.reactivex.Observable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -42,7 +41,7 @@ public class ObservableRequestTest {
     retrofit = new Retrofit.Builder()
         .baseUrl(server.url("/").toString())
         .addConverterFactory(new StringConverterFactory())
-        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
         .build();
   }
 
@@ -56,8 +55,8 @@ public class ObservableRequestTest {
         .build();
 
     Observable<String> observable = request.newCall();
-    BlockingObservable<String> o = observable.toBlocking();
-    assertThat(o.first()).isEqualTo("Hi");
+    String first = observable.blockingFirst();
+    assertThat(first).isEqualTo("Hi");
   }
 
   @Test public void responseSuccess200() {
@@ -71,8 +70,7 @@ public class ObservableRequestTest {
             .build();
 
     Observable<Response<String>> observable = request.newCall();
-    BlockingObservable<Response<String>> o = observable.toBlocking();
-    Response<String> response = o.first();
+    Response<String> response = observable.blockingFirst();;
     assertThat(response.isSuccessful()).isTrue();
     assertThat(response.body()).isEqualTo("Hi");
   }
