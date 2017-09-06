@@ -15,17 +15,20 @@
  */
 package retrofit2;
 
+
+import javax.annotation.Nullable;
+
 public class Query {
 
   private final String name;
-  private final String value;
+  @Nullable private final String value;
   private final boolean encoded;
 
-  public Query(String name, String value) {
+  public Query(String name, @Nullable String value) {
     this(name, value, false);
   }
 
-  public Query(String name, String value, boolean encoded) {
+  public Query(String name, @Nullable String value, boolean encoded) {
     this.name = name;
     this.value = value;
     this.encoded = encoded;
@@ -35,7 +38,7 @@ public class Query {
     return name;
   }
 
-  public String value() {
+  @Nullable public String value() {
     return value;
   }
 
