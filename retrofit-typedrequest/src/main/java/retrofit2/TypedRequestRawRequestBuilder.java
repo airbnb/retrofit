@@ -29,7 +29,8 @@ import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
 import okio.BufferedSink;
 
-final class TypedRequestRawRequestBuilder {
+@SuppressWarnings("WeakerAccess")
+public final class TypedRequestRawRequestBuilder {
   private static final Headers NO_HEADERS = Headers.of();
 
   private final String requestMethod;
@@ -47,7 +48,7 @@ final class TypedRequestRawRequestBuilder {
   private Headers.Builder headers;
   private String contentTypeHeader;
 
-  TypedRequestRawRequestBuilder(Retrofit retrofit, TypedRequest request) {
+  public TypedRequestRawRequestBuilder(Retrofit retrofit, TypedRequest request) {
     this.retrofit = retrofit;
     this.urlBuilder = retrofit.baseUrl().newBuilder();
     this.request = request;
@@ -225,7 +226,7 @@ final class TypedRequestRawRequestBuilder {
     }
   }
 
-  okhttp3.Request build() {
+  public okhttp3.Request build() {
     String apiUrl = urlBuilder.build().toString();
     StringBuilder url = new StringBuilder(apiUrl);
     if (apiUrl.endsWith("/")) {
