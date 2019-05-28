@@ -73,7 +73,7 @@ public class TypedRequestRawRequestBuilderTest {
     assertThat(request.method()).isEqualTo("DELETE");
     assertThat(request.headers().size()).isZero();
     assertThat(request.url().toString()).isEqualTo(server.url("/foo/bar/").toString());
-    assertThat(request.body()).isEqualTo("hi");
+    assertBody(request.body(), "hi");
   }
 
   @Test public void head() {
