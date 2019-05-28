@@ -214,8 +214,8 @@ public abstract class TypedRequest {
       return this;
     }
 
-    private Builder requestHasBody(boolean requestHasBody) {
-      this.hasBody = requestHasBody;
+    private Builder hasBody(boolean hasBody) {
+      this.hasBody = hasBody;
       return this;
     }
 
@@ -236,7 +236,7 @@ public abstract class TypedRequest {
       boolean isStandardBodyRequest = method == Method.PATCH || method == Method.POST
           || method == Method.PUT;
       boolean isDeleteWithBody = method == Method.DELETE && gotBody;
-      this.requestHasBody(isStandardBodyRequest || isDeleteWithBody);
+      this.hasBody(isStandardBodyRequest || isDeleteWithBody);
 
       boolean gotField = !fields.isEmpty();
       boolean gotPart = !parts.isEmpty();
