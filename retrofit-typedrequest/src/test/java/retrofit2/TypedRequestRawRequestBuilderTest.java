@@ -67,6 +67,15 @@ public class TypedRequestRawRequestBuilderTest {
     assertThat(request.body()).isNull();
   }
 
+  @Test public void deleteWithBody() {
+    RequestBody body = RequestBody.create(MediaType.parse("text/plain"), "hi");
+    okhttp3.Request request = buildRequest(Method.DELETE, body);
+    assertThat(request.method()).isEqualTo("DELETE");
+    assertThat(request.headers().size()).isZero();
+    assertThat(request.url().toString()).isEqualTo(server.url("/foo/bar/").toString());
+    assertBody(request.body(), "hi");
+  }
+
   @Test public void head() {
     okhttp3.Request request = buildRequest(Method.HEAD);
     assertThat(request.method()).isEqualTo("HEAD");

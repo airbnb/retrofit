@@ -44,14 +44,17 @@ public abstract class TypedRequest {
   protected final CallAdapter callAdapter;
   protected final TypedRawCallFactory<Object> callFactory;
   protected boolean isCancelled;
+  protected boolean hasBody;
 
   TypedRequest(Retrofit retrofit, ParameterizedType returnType,
-      BodyEncoding bodyEncoding, String path, Method method, Object body, Object tag,
-      List<Query> query, Map<String, String> headers, List<Part> parts, List<Field> fields) {
+      BodyEncoding bodyEncoding, String path, Method method, Object body, boolean hasBody,
+      Object tag, List<Query> query, Map<String, String> headers, List<Part> parts,
+      List<Field> fields) {
     this.returnType = returnType;
     this.path = path;
     this.method = method;
     this.body = body;
+    this.hasBody = hasBody;
     this.tag = tag;
     this.query = query;
     this.headers = headers;
@@ -134,6 +137,7 @@ public abstract class TypedRequest {
     protected Map<String, String> headers = Collections.emptyMap();
     protected List<Part> parts = Collections.emptyList();
     protected List<Field> fields = Collections.emptyList();
+    protected boolean hasBody;
 
     public Builder(Retrofit retrofit, TypedRequest request) {
       this(retrofit);
@@ -210,6 +214,11 @@ public abstract class TypedRequest {
       return this;
     }
 
+    private Builder hasBody(boolean hasBody) {
+      this.hasBody = hasBody;
+      return this;
+    }
+
     public TypedRequest build() {
       checkNotNull(path, "path == null");
       checkNotNull(method, "method == null");
@@ -219,14 +228,20 @@ public abstract class TypedRequest {
         throw new IllegalArgumentException("URL path \"" + path + "\" must start with '/'.");
       }
 
-      boolean requestHasBody =
-          method == Method.PATCH || method == Method.POST || method == Method.PUT;
-
       boolean gotBody = body != null;
+      // Retrofit typically supports delete with body via @Http annotation.
+      // TypedRequest cannot support that easily, so to match
+      // expected retrofit behavior, DELETE requests are normally _not_ sent with a body.
+      // If a body is present, however, we allow it.
+      boolean isStandardBodyRequest = method == Method.PATCH || method == Method.POST
+          || method == Method.PUT;
+      boolean isDeleteWithBody = method == Method.DELETE && gotBody;
+      this.hasBody(isStandardBodyRequest || isDeleteWithBody);
+
       boolean gotField = !fields.isEmpty();
       boolean gotPart = !parts.isEmpty();
 
-      if (bodyEncoding == BodyEncoding.NONE && !requestHasBody && gotBody) {
+      if (bodyEncoding == BodyEncoding.NONE && !hasBody && gotBody) {
         throw new IllegalArgumentException("Non-body HTTP method cannot contain body.");
       }
       if (bodyEncoding == BodyEncoding.FORM_URL_ENCODED && !gotField) {
