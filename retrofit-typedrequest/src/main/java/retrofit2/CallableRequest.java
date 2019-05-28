@@ -22,8 +22,9 @@ import java.util.Map;
 
 public final class CallableRequest extends TypedRequest {
   private CallableRequest(Retrofit retrofit, ParameterizedType returnType,
-      BodyEncoding bodyEncoding, String path, Method method, Object body, boolean hasBody, Object tag,
-      List<Query> query, Map<String, String> headers, List<Part> parts, List<Field> fields) {
+      BodyEncoding bodyEncoding, String path, Method method, Object body, boolean hasBody,
+      Object tag, List<Query> query, Map<String, String> headers, List<Part> parts,
+      List<Field> fields) {
     super(retrofit, returnType, bodyEncoding, path,
         method, body, hasBody, tag, query, headers, parts, fields);
   }
@@ -56,8 +57,8 @@ public final class CallableRequest extends TypedRequest {
           return null;
         }
       };
-      return new CallableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody, tag, query,
-          headers, parts, fields);
+      return new CallableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody, tag,
+          query, headers, parts, fields);
     }
 
     @Override public Builder path(String path) {

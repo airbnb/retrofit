@@ -47,8 +47,9 @@ public abstract class TypedRequest {
   protected boolean hasBody;
 
   TypedRequest(Retrofit retrofit, ParameterizedType returnType,
-      BodyEncoding bodyEncoding, String path, Method method, Object body, boolean hasBody, Object tag,
-      List<Query> query, Map<String, String> headers, List<Part> parts, List<Field> fields) {
+      BodyEncoding bodyEncoding, String path, Method method, Object body, boolean hasBody,
+      Object tag, List<Query> query, Map<String, String> headers, List<Part> parts,
+      List<Field> fields) {
     this.returnType = returnType;
     this.path = path;
     this.method = method;
@@ -228,9 +229,12 @@ public abstract class TypedRequest {
       }
 
       boolean gotBody = body != null;
-      // Retrofit typically supports delete with body via @Http annotation. TypedRequest cannot support that easily, so to match
-      // expected retrofit behavior, DELETE requests are normally _not_ sent with a body. If a body is present, however, we allow it.
-      boolean isStandardBodyRequest = method == Method.PATCH || method == Method.POST || method == Method.PUT;
+      // Retrofit typically supports delete with body via @Http annotation.
+      // TypedRequest cannot support that easily, so to match
+      // expected retrofit behavior, DELETE requests are normally _not_ sent with a body.
+      // If a body is present, however, we allow it.
+      boolean isStandardBodyRequest = method == Method.PATCH || method == Method.POST
+          || method == Method.PUT;
       boolean isDeleteWithBody = method == Method.DELETE && gotBody;
       this.requestHasBody(isStandardBodyRequest || isDeleteWithBody);
 
