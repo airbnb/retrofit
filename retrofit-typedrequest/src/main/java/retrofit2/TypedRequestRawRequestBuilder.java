@@ -53,8 +53,7 @@ public final class TypedRequestRawRequestBuilder {
     this.urlBuilder = retrofit.baseUrl().newBuilder();
     this.request = request;
     this.requestMethod = request.method().name();
-    this.hasBody = "PATCH".equals(requestMethod) || "POST".equals(requestMethod)
-        || "PUT".equals(requestMethod);
+    this.hasBody = request.hasBody;
 
     if (request.bodyEncoding() == TypedRequest.BodyEncoding.FORM_URL_ENCODED) {
       // Will be set to 'body' in 'build'.

@@ -24,10 +24,10 @@ import io.reactivex.Observable;
 
 public final class ObservableRequest extends TypedRequest {
   ObservableRequest(Retrofit retrofit, ParameterizedType returnType, BodyEncoding bodyEncoding,
-      String path, Method method, Object body, Object tag, List<Query> query,
+      String path, Method method, Object body, boolean hasBody, Object tag, List<Query> query,
       Map<String, String> headers, List<Part> parts, List<Field> fields) {
     super(retrofit, returnType, bodyEncoding,
-        path, method, body, tag, query, headers, parts, fields);
+        path, method, body, hasBody, tag, query, headers, parts, fields);
   }
 
   public Builder newBuilder(Retrofit retrofit) {
@@ -58,7 +58,7 @@ public final class ObservableRequest extends TypedRequest {
           return null;
         }
       };
-      return new ObservableRequest(retrofit, returnType, bodyEncoding, path, method, body, tag,
+      return new ObservableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody, tag,
           query, headers, parts, fields);
     }
 
