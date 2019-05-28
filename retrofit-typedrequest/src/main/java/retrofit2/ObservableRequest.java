@@ -58,8 +58,8 @@ public final class ObservableRequest extends TypedRequest {
           return null;
         }
       };
-      return new ObservableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody, tag,
-          query, headers, parts, fields);
+      return new ObservableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody,
+          tag, query, headers, parts, fields);
     }
 
     @Override public Builder path(String path) {

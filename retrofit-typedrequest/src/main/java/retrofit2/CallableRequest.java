@@ -57,8 +57,8 @@ public final class CallableRequest extends TypedRequest {
           return null;
         }
       };
-      return new CallableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody, tag,
-          query, headers, parts, fields);
+      return new CallableRequest(retrofit, returnType, bodyEncoding, path, method, body, hasBody,
+          tag, query, headers, parts, fields);
     }
 
     @Override public Builder path(String path) {
