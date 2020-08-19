@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.squareup.retrofit2</groupId>
         <artifactId>parent</artifactId>
-        <version>2.3.0.9-airbnb</version>
+        <version>2.3.0.10-airbnb</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
